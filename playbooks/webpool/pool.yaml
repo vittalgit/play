@@ -1,0 +1,28 @@
+#Create Webpool to access application
+- name: Network BIGIP
+  hosts: bigip
+  connection: local
+  vars_files: 
+   - poolvars.yaml
+  tasks:
+      - name: Create a webpool
+        bigip_node:
+            server: "{{ inventory_hostname }}"
+            user: "{{ bigip_username }}"
+            password: "{{ bigip_password }}"
+            host: "{{ webnode_ip }}"
+            name: "{{ webnode_name }}"
+            validate_certs: "no"
+        delegate_to: localhost
+
+      - name: Create a web-pool
+        bigip_pool:
+            server: "{{ inventory_hostname }}"
+            user: "{{ bigip_username }}"
+            password: "{{ bigip_password }}"
+            lb_method: "ratio_member"
+            monitors: http
+            monitor_type: and_list
+            name: "{{ pool_name }}"
+            validate_certs: "no"
+        delegate_to: localhost

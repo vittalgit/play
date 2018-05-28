@@ -1,0 +1,10 @@
+---
+- name: Create a Webpool   Node
+  bigip_node:
+    server: "{{ invenrtoy_hostname }}"
+    user: "bigip_username"
+    password: {{ bigip_password }}
+    host: {{ item.node_ips }}
+    name: {{ item.node_name }}
+    validate_certs: "no"
+  delegate_to: localhost

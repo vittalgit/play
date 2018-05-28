@@ -1,0 +1,27 @@
+---
+
+- hosts: localhost
+
+  connection: local
+
+  vars:
+
+    my_var:
+
+    - var1: value1
+
+      varX: valueY
+
+    - var2: value2
+
+  tasks:
+
+  - debug: var=item
+
+    with_items: "{{my_var}}"
+
+  - debug: var=item.var1
+
+    when: "'var1' in item"
+
+    with_items: "{{my_var}}"

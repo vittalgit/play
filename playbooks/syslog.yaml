@@ -1,0 +1,49 @@
+- name: Network BIGIP
+
+  hosts: bigip
+
+  connection: local
+
+  tasks:
+
+      - name: Creatsyslog
+
+        uri:
+
+            uri: //{{inventory_hostname}}//mgmt/tm/sys/syslog
+
+            validate_certs: no
+
+            method: PUT
+
+            server: "{{ inventory_hostname }}"
+
+            user: "admin"
+
+            password: vangadi
+
+            body:
+
+               remoteServers:
+
+               - host: 2.2.2.4
+
+                 localIp: none
+
+                 name: "/Common/remotesyslog3"
+
+                 remotePort: 514
+
+               - host: 2.2.2.5
+
+                 localIp: none
+
+                 name: "/Common/remotesyslog4"
+
+                 remotePort: 514
+
+            return_content: yes
+
+            body_format: json
+
+            register: post_response  

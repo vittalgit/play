@@ -1,0 +1,5 @@
+---
+# vars file for webpool
+bigip_username = admin
+bigip_password = vangadi
+- { node_ips = node_name =}

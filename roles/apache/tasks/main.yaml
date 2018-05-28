@@ -1,0 +1,25 @@
+---
+
+
+
+  - name: Install the httpd rpm
+
+    yum: name=httpd
+
+  - name: Copying the demo file
+
+    template: src="index.html" dest=/var/www/html
+
+      owner=apache group=apache mode=0644
+
+  - name: start the httpd service
+
+    service: name=httpd state=started
+
+  - name: Open port 80
+
+    firewalld: service=http permanent=true state=enabled
+
+  - name: start the firewalld service
+
+    service: name=firewalld state=restarted

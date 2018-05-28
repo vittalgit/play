@@ -1,0 +1,85 @@
+#This playbook create an internal vlan and assign a self-ip
+
+- name: Network BIGIP
+
+  hosts: bigip
+
+  connection: local
+
+  tasks:
+
+      - name: Create Interanl vlan
+
+        bigip_vlan:
+
+            server: "{{ inventory_hostname }}"
+
+            user: "admin"
+
+            password: vangadi
+
+            tag: "10"
+
+            untagged_interfaces:
+
+                - 1.3
+
+            name: "internal_vlan"
+
+
+
+      - name: Create interanl self-ip
+
+        bigip_selfip:
+
+            server: "{{ inventory_hostname }}"
+
+            user: "admin"
+
+            password: vangadi
+
+            address: "192.168.68.140"
+
+            netmask: "255.255.255.0"
+
+            vlan: "internal_vlan"
+
+            name: "int_selfip"
+
+      - name: Create external vlan
+
+        bigip_vlan:
+
+            server: "{{ inventory_hostname }}"
+
+            user: "admin"
+
+            password: vangadi  
+
+            tag: "20"
+
+            untagged_interfaces:
+
+                - 1.2
+
+            name: "external_vlan"
+
+      - name: Create external self-ip
+
+        bigip_selfip:
+
+            server: "{{ inventory_hostname }}"
+
+            user: "admin"
+
+            password: vangadi  
+
+            address: "192.168.68.143"
+
+            netmask: "255.255.255.0"
+
+            vlan: "external_vlan"
+
+            allow_service: "default"
+
+            name: "ext_selfip"  

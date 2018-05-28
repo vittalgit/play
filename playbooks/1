@@ -1,0 +1,140 @@
+# Create HTTPS application
+
+- name: Network BIGIP
+
+  hosts: bigip
+
+  connection: local
+
+  tasks:
+
+      - name: Create a web01.internal node
+
+        bigip_node:
+
+            server: "{{ inventory_hostname }}"
+
+            user: "admin"
+
+            password: vangadi
+
+            host: "192.168.78.130"
+
+            name: "web01.internal"
+
+            validate_certs: "no"
+
+        delegate_to: localhost
+
+      - name: Create a web-pool
+
+        bigip_pool:
+
+            server: "{{ inventory_hostname }}"
+
+            user: "admin"
+
+            password: vangadi
+
+            lb_method: "ratio_member"
+
+            monitors: http
+            monitor_type: and_list
+
+            name: "web-pool"
+
+            validate_certs: "no"
+
+        delegate_to: localhost
+
+      - name: Add http node to web-pool
+
+        bigip_pool_member:
+
+            description: "HTTP Webserver-1"
+
+            host: "{{ item.host }}"
+
+            name: "{{ item.name }}"
+
+            user: "admin"
+
+            password: vangadi
+
+            pool: "web-pool"
+
+            port: 80
+            server: "{{ inventory_hostname }}"
+
+            validate_certs: "no"
+
+        with_items:
+
+            - host: "192.168.78.130"
+
+              name: "web01.internal"
+
+        delegate_to: localhost
+
+
+
+      - name: Create Virtal server
+
+        bigip_virtual_server:
+
+            description: "Secure web application"
+
+            server: "{{ inventory_hostname }}"
+
+            user: "admin"
+
+            password: vangadi
+
+            name: "http_vs"
+
+            destination: "192.168.78.141"
+
+            port: 80
+
+            snat: "Automap"
+
+            all_profiles: 
+
+                - http
+
+                - clientssl
+
+            pool: "web-pool"
+
+            validate_certs: "no"
+
+        delegate_to: localhost
+
+      - name: Create a redirect virtual server
+
+        bigip_virtual_server:
+
+            description: "Redirect Virtual server"
+
+            server: "{{ inventory_hostname }}"
+
+            user: "admin"
+
+            password: vangadi
+
+            name: "http_redirect"
+
+            destination: "10.10.20.100"
+            port: 80
+
+            validate_certs: "no"
+
+            all_profiles:
+
+                - http
+
+            all_rules:
+
+                - _sys_https_redirect
+
+        delegate_to: localhost

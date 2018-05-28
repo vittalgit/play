@@ -1,0 +1,6 @@
+---
+bigip_username: admin
+bigip_password: vangadi
+webnode_ip: '192.168.78.132'
+webnode_name: 'Web1'
+pool_name: webpool1
